@@ -18,39 +18,39 @@ def create_post_service(
     return create_post(db, post, user_id)
 
 
-def get_post_service(db: Session, post_id: int):
+# def get_post_service(db: Session, post_id: int):
 
-    post = get_post(db, post_id)
+#     post = get_post(db, post_id)
 
-    if not post:
-        raise HTTPException(
-            status_code=404,
-            detail="Post not found"
-        )
+#     if not post:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="Post not found"
+#         )
 
-    return post
-
-
-def get_all_posts_service(db: Session):
-
-    return get_all_posts(db)
+#     return post
 
 
-def update_post_service(
-    db: Session,
-    post_id: int,
-    post_data: PostUpdate
-):
+# def get_all_posts_service(db: Session):
+
+#     return get_all_posts(db)
+
+
+# def update_post_service(
+#     db: Session,
+#     post_id: int,
+#     post_data: PostUpdate
+# ):
 
     post = update_post(db, post_id, post_data)
 
-    if not post:
-        raise HTTPException(
-            status_code=404,
-            detail="Post not found"
-        )
+    # if not post:
+    #     raise HTTPException(
+    #         status_code=404,
+    #         detail="Post not found"
+    #     )
 
-    return post
+    # return post
 
 
 def delete_post_service(db: Session, post_id: int):
