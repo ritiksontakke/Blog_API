@@ -5,6 +5,7 @@ from app.schemas.user import UserCreate
 def create_user(db : Session, user : UserCreate):
 
     new_user = User(
+        name = user.name,
         username = user.username,
         email = user.email,
         password_hash = user.password
@@ -32,6 +33,7 @@ def update_user(db : Session, user_id : int, user_data : UserCreate):
     if not user:
         return None
     
+    user.name = user_data.name
     user.username = user_data.username
     user.email = user_data.email
     user.password_hash = user_data.password

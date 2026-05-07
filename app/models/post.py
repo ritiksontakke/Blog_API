@@ -13,9 +13,15 @@ class Post(Base):
 
     content : Mapped[str] = mapped_column(String, nullable=False)
 
-    user_id : Mapped[int] = mapped_column(ForeignKey("user_id"))
+    user_id : Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     created_at : Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
     )
+
+    # models/post.py
+
+    user = relationship("User",back_populates="posts")
+
+    comments = relationship("Comment",back_populates="post")

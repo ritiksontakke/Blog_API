@@ -3,13 +3,14 @@ from pydantic import BaseModel , EmailStr , field_validator
 # Inheritance
 
 class UserBase(BaseModel):
+    name : str 
     username : str
     email : EmailStr
 
 class UserCreate(UserBase):
     password : str
 
-    @field_validator
+    @field_validator("password")
     @classmethod
     def validate_password(cls, value):
 

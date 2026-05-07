@@ -23,3 +23,9 @@ class Comment(Base):
         DateTime(timezone=True),
         server_default=func.now()
     )
+
+    # models/comment.py
+
+    user = relationship("User",back_populates="comments")
+
+    post = relationship("Post",back_populates="comments")
