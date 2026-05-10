@@ -2,6 +2,9 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserCreate
 
+
+# class 
+
 def create_user(db : Session, user : UserCreate):
 
     new_user = User(

@@ -12,7 +12,8 @@ from app.repository.user import (
     delete_user,
     get_user_by_email
 )
-
+# class based
+# function vs method
 
 def create_user_service(db: Session, user: UserCreate):
 
