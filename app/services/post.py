@@ -69,4 +69,3 @@ def delete_post_service(db: Session, post_id: int):
     return {
         "message": "Post deleted successfully"
     }
-    
