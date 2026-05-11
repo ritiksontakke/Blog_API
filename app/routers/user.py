@@ -54,16 +54,6 @@ def get_user(
     return user_service.get_user(user_id)
 
 
-@UserRouter.get("/")
-def get_all_users(
-    db: Session = Depends(get_db)
-):
-
-    user_service = UserService(db)
-
-    return user_service.get_all_users()
-
-
 @UserRouter.put("/{user_id}")
 def update_user(
     user_id: int,

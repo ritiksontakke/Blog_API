@@ -46,17 +46,6 @@ def get_post(
 
     return post_service.get_post(post_id)
 
-
-@PostRouter.get("/")
-def get_all_posts(
-    db: Session = Depends(get_db)
-):
-
-    post_service = PostService(db)
-
-    return post_service.get_all_posts()
-
-
 @PostRouter.put("/{post_id}")
 def update_post(
     post_id: int,

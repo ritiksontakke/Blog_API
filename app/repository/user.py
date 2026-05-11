@@ -28,9 +28,14 @@ class UserRepository:
 
         return db.query(User).filter(User.id == user_id).first()
 
-    def get_all_users(self, db: Session):
-
-        return db.query(User).all()
+    def get_user(
+        self,
+        db: Session,
+        user_id: int
+    ):
+        return db.query(User).filter(
+            User.id == user_id
+        ).first()
 
     def update_user(self, db: Session, user_id: int, user_data: UserCreate):
 

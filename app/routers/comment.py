@@ -47,17 +47,6 @@ def get_comment(
 
     return comment_service.get_comment(comment_id)
 
-
-@CommentRouter.get("/")
-def get_all_comments(
-    db: Session = Depends(get_db)
-):
-
-    comment_service = CommentService(db)
-
-    return comment_service.get_all_comments()
-
-
 @CommentRouter.delete("/{comment_id}")
 def delete_comment(
     comment_id: int,

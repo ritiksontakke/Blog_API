@@ -68,12 +68,6 @@ class UserService:
 
         return user
 
-    def get_all_users(self):
-
-        return self.user_repository.get_all_users(
-            self.db
-        )
-
     def update_user(
         self,
         user_id: int,
