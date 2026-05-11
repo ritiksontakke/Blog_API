@@ -1,5 +1,3 @@
-# app/routers/comment.py
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -10,12 +8,7 @@ from app.schemas.comment import (
 
 from app.db.dependency import get_db
 
-from app.services.comment import (
-    create_comment_service,
-    get_comment_service,
-    get_all_comments_service,
-    delete_comment_service
-)
+from app.services.comment import CommentService
 
 
 CommentRouter = APIRouter(
@@ -35,8 +28,9 @@ def create_comment(
     db: Session = Depends(get_db)
 ):
 
-    return create_comment_service(
-        db,
+    comment_service = CommentService(db)
+
+    return comment_service.create_comment(
         comment,
         user_id,
         post_id
@@ -49,7 +43,9 @@ def get_comment(
     db: Session = Depends(get_db)
 ):
 
-    return get_comment_service(db, comment_id)
+    comment_service = CommentService(db)
+
+    return comment_service.get_comment(comment_id)
 
 
 @CommentRouter.get("/")
@@ -57,7 +53,9 @@ def get_all_comments(
     db: Session = Depends(get_db)
 ):
 
-    return get_all_comments_service(db)
+    comment_service = CommentService(db)
+
+    return comment_service.get_all_comments()
 
 
 @CommentRouter.delete("/{comment_id}")
@@ -66,7 +64,6 @@ def delete_comment(
     db: Session = Depends(get_db)
 ):
 
-    return delete_comment_service(
-        db,
-        comment_id
-    )
+    comment_service = CommentService(db)
+
+    return comment_service.delete_comment(comment_id)

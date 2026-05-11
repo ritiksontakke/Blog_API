@@ -1,99 +1,112 @@
-# services/user.py
-
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.schemas.user import UserCreate, UserLogin
-from app.repository.user import (
-    create_user,
-    get_user,
-    get_all_users,
-    update_user,
-    delete_user,
-    get_user_by_email
-)
-# class based
-# function vs method
+from app.repository.user import UserRepository
 
-def create_user_service(db: Session, user: UserCreate):
 
-    existing_user = get_user_by_email(db, user.email)
+class UserService:
 
-    if existing_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Email already exists"
+    def __init__(self, db: Session):
+
+        self.db = db
+        self.user_repository = UserRepository()
+
+    def create_user(self, user: UserCreate):
+
+        existing_user = self.user_repository.get_user_by_email(
+            self.db,
+            user.email
         )
 
-    return create_user(db, user)
+        if existing_user:
+            raise HTTPException(
+                status_code=400,
+                detail="Email already exists"
+            )
 
-
-def login_user_service(db: Session, user: UserLogin):
-
-    existing_user = get_user_by_email(db, user.email)
-
-    if not existing_user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
+        return self.user_repository.create_user(
+            self.db,
+            user
         )
 
-    if existing_user.password_hash != user.password:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid password"
+    def login_user(self, user: UserLogin):
+
+        existing_user = self.user_repository.get_user_by_email(
+            self.db,
+            user.email
         )
 
-    return {
-        "message": "Login Successful"
-    }
+        if not existing_user:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
 
+        if existing_user.password_hash != user.password:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid password"
+            )
 
-def get_user_service(db: Session, user_id: int):
+        return {
+            "message": "Login Successful"
+        }
 
-    user = get_user(db, user_id)
+    def get_user(self, user_id: int):
 
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
+        user = self.user_repository.get_user(
+            self.db,
+            user_id
         )
 
-    return user
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
 
+        return user
 
-def get_all_users_service(db: Session):
+    def get_all_users(self):
 
-    return get_all_users(db)
-
-
-def update_user_service(
-    db: Session,
-    user_id: int,
-    user_data: UserCreate
-):
-
-    user = update_user(db, user_id, user_data)
-
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
+        return self.user_repository.get_all_users(
+            self.db
         )
 
-    return user
+    def update_user(
+        self,
+        user_id: int,
+        user_data: UserCreate
+    ):
 
-
-def delete_user_service(db: Session, user_id: int):
-
-    user = delete_user(db, user_id)
-
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
+        user = self.user_repository.update_user(
+            self.db,
+            user_id,
+            user_data
         )
 
-    return {
-        "message": "User deleted successfully"
-    }
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
+
+        return user
+
+    def delete_user(self, user_id: int):
+
+        user = self.user_repository.delete_user(
+            self.db,
+            user_id
+        )
+
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
+
+        return {
+            "message": "User deleted successfully"
+        }

@@ -1,50 +1,59 @@
 from sqlalchemy.orm import Session
+
 from app.models.comment import Comment
 from app.schemas.comment import CommentCreate
 
 
-def create_comment(
-    db: Session,
-    comment: CommentCreate,
-    user_id: int,
-    post_id: int
-):
+class CommentRepository:
 
-    new_comment = Comment(
-        content=comment.content,
-        user_id=user_id,
-        post_id=post_id
-    )
+    def create_comment(
+        self,
+        db: Session,
+        comment: CommentCreate,
+        user_id: int,
+        post_id: int
+    ):
 
-    db.add(new_comment)
-    db.commit()
-    db.refresh(new_comment)
+        new_comment = Comment(
+            content=comment.content,
+            user_id=user_id,
+            post_id=post_id
+        )
 
-    return new_comment
+        db.add(new_comment)
+        db.commit()
+        db.refresh(new_comment)
 
+        return new_comment
 
-def get_comment(db: Session, comment_id: int):
+    def get_comment(
+        self,
+        db: Session,
+        comment_id: int
+    ):
 
-    return db.query(Comment).filter(
-        Comment.id == comment_id
-    ).first()
+        return db.query(Comment).filter(
+            Comment.id == comment_id
+        ).first()
 
+    def get_all_comments(self, db: Session):
 
-def get_all_comments(db: Session):
+        return db.query(Comment).all()
 
-    return db.query(Comment).all()
+    def delete_comment(
+        self,
+        db: Session,
+        comment_id: int
+    ):
 
+        comment = db.query(Comment).filter(
+            Comment.id == comment_id
+        ).first()
 
-def delete_comment(db: Session, comment_id: int):
+        if not comment:
+            return None
 
-    comment = db.query(Comment).filter(
-        Comment.id == comment_id
-    ).first()
+        db.delete(comment)
+        db.commit()
 
-    if not comment:
-        return None
-
-    db.delete(comment)
-    db.commit()
-
-    return comment
+        return comment

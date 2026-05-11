@@ -1,5 +1,3 @@
-# app/routers/user.py
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -11,14 +9,7 @@ from app.schemas.user import (
 
 from app.db.dependency import get_db
 
-from app.services.user import (
-    create_user_service,
-    login_user_service,
-    get_user_service,
-    get_all_users_service,
-    update_user_service,
-    delete_user_service
-)
+from app.services.user import UserService
 
 
 UserRouter = APIRouter(
@@ -36,7 +27,9 @@ def create_account(
     db: Session = Depends(get_db)
 ):
 
-    return create_user_service(db, user)
+    user_service = UserService(db)
+
+    return user_service.create_user(user)
 
 
 @UserRouter.post("/login")
@@ -45,7 +38,9 @@ def login_account(
     db: Session = Depends(get_db)
 ):
 
-    return login_user_service(db, user)
+    user_service = UserService(db)
+
+    return user_service.login_user(user)
 
 
 @UserRouter.get("/{user_id}")
@@ -54,7 +49,9 @@ def get_user(
     db: Session = Depends(get_db)
 ):
 
-    return get_user_service(db, user_id)
+    user_service = UserService(db)
+
+    return user_service.get_user(user_id)
 
 
 @UserRouter.get("/")
@@ -62,7 +59,9 @@ def get_all_users(
     db: Session = Depends(get_db)
 ):
 
-    return get_all_users_service(db)
+    user_service = UserService(db)
+
+    return user_service.get_all_users()
 
 
 @UserRouter.put("/{user_id}")
@@ -72,8 +71,9 @@ def update_user(
     db: Session = Depends(get_db)
 ):
 
-    return update_user_service(
-        db,
+    user_service = UserService(db)
+
+    return user_service.update_user(
         user_id,
         user_data
     )
@@ -85,4 +85,6 @@ def delete_user(
     db: Session = Depends(get_db)
 ):
 
-    return delete_user_service(db, user_id)
+    user_service = UserService(db)
+
+    return user_service.delete_user(user_id)

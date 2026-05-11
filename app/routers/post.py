@@ -1,5 +1,3 @@
-# app/routers/post.py
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -11,13 +9,7 @@ from app.schemas.post import (
 
 from app.db.dependency import get_db
 
-from app.services.post import (
-    create_post_service,
-    get_post_service,
-    get_all_posts_service,
-    update_post_service,
-    delete_post_service
-)
+from app.services.post import PostService
 
 
 PostRouter = APIRouter(
@@ -36,8 +28,9 @@ def create_post(
     db: Session = Depends(get_db)
 ):
 
-    return create_post_service(
-        db,
+    post_service = PostService(db)
+
+    return post_service.create_post(
         post,
         user_id
     )
@@ -49,7 +42,9 @@ def get_post(
     db: Session = Depends(get_db)
 ):
 
-    return get_post_service(db, post_id)
+    post_service = PostService(db)
+
+    return post_service.get_post(post_id)
 
 
 @PostRouter.get("/")
@@ -57,7 +52,9 @@ def get_all_posts(
     db: Session = Depends(get_db)
 ):
 
-    return get_all_posts_service(db)
+    post_service = PostService(db)
+
+    return post_service.get_all_posts()
 
 
 @PostRouter.put("/{post_id}")
@@ -67,8 +64,9 @@ def update_post(
     db: Session = Depends(get_db)
 ):
 
-    return update_post_service(
-        db,
+    post_service = PostService(db)
+
+    return post_service.update_post(
         post_id,
         post_data
     )
@@ -80,4 +78,6 @@ def delete_post(
     db: Session = Depends(get_db)
 ):
 
-    return delete_post_service(db, post_id)
+    post_service = PostService(db)
+
+    return post_service.delete_post(post_id)

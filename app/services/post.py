@@ -2,70 +2,82 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.schemas.post import PostCreate, PostUpdate
-from app.repository.post import (
-    create_post,
-    update_post,
-    delete_post,
-    get_all_posts,
-    get_post
-
-)
+from app.repository.post import PostRepository
 
 
-def create_post_service(
-    db: Session,
-    post: PostCreate,
-    user_id: int
-):
+class PostService:
 
-    return create_post(db, post, user_id)
+    def __init__(self, db: Session):
 
+        self.db = db
+        self.post_repository = PostRepository()
 
-def get_post_service(db: Session, post_id: int):
+    def create_post(
+        self,
+        post: PostCreate,
+        user_id: int
+    ):
 
-     post = get_post(db, post_id)
-
-     if not post:
-         raise HTTPException(
-             status_code=404,
-             detail="Post not found"
-         )
-
-     return post
-
-
-def get_all_posts_service(db: Session):
-
-     return get_all_posts(db)
-
-
-def update_post_service(
-     db: Session,
-     post_id: int,
-     post_data: PostUpdate
- ):
-
-    post = update_post(db, post_id, post_data)
-
-    if not post:
-        raise HTTPException(
-             status_code=404,
-             detail="Post not found"
+        return self.post_repository.create_post(
+            self.db,
+            post,
+            user_id
         )
 
-    return post
+    def get_post(self, post_id: int):
 
-
-def delete_post_service(db: Session, post_id: int):
-
-    post = delete_post(db, post_id)
-
-    if not post:
-        raise HTTPException(
-            status_code=404,
-            detail="Post not found"
+        post = self.post_repository.get_post(
+            self.db,
+            post_id
         )
 
-    return {
-        "message": "Post deleted successfully"
-    }
+        if not post:
+            raise HTTPException(
+                status_code=404,
+                detail="Post not found"
+            )
+
+        return post
+
+    def get_all_posts(self):
+
+        return self.post_repository.get_all_posts(
+            self.db
+        )
+
+    def update_post(
+        self,
+        post_id: int,
+        post_data: PostUpdate
+    ):
+
+        post = self.post_repository.update_post(
+            self.db,
+            post_id,
+            post_data
+        )
+
+        if not post:
+            raise HTTPException(
+                status_code=404,
+                detail="Post not found"
+            )
+
+        return post
+
+    def delete_post(self, post_id: int):
+
+        post = self.post_repository.delete_post(
+            self.db,
+            post_id
+        )
+
+        if not post:
+            raise HTTPException(
+                status_code=404,
+                detail="Post not found"
+            )
+
+        return {
+            "message": "Post deleted successfully"
+        }

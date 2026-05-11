@@ -1,63 +1,65 @@
-# services/comment.py
-
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.schemas.comment import CommentCreate
-from app.repository.comment import (
-    create_comment,
-    get_comment,
-    get_all_comments,
-    delete_comment
-)
+from app.repository.comment import CommentRepository
 
 
-def create_comment_service(
-    db: Session,
-    comment: CommentCreate,
-    user_id: int,
-    post_id: int
-):
+class CommentService:
 
-    return create_comment(
-        db,
-        comment,
-        user_id,
-        post_id
-    )
+    def __init__(self, db: Session):
 
+        self.db = db
+        self.comment_repository = CommentRepository()
 
-def get_comment_service(db: Session, comment_id: int):
+    def create_comment(
+        self,
+        comment: CommentCreate,
+        user_id: int,
+        post_id: int
+    ):
 
-    comment = get_comment(db, comment_id)
-
-    if not comment:
-        raise HTTPException(
-            status_code=404,
-            detail="Comment not found"
+        return self.comment_repository.create_comment(
+            self.db,
+            comment,
+            user_id,
+            post_id
         )
 
-    return comment
+    def get_comment(self, comment_id: int):
 
-
-def get_all_comments_service(db: Session):
-
-    return get_all_comments(db)
-
-
-def delete_comment_service(
-    db: Session,
-    comment_id: int
-):
-
-    comment = delete_comment(db, comment_id)
-
-    if not comment:
-        raise HTTPException(
-            status_code=404,
-            detail="Comment not found"
+        comment = self.comment_repository.get_comment(
+            self.db,
+            comment_id
         )
 
-    return {
-        "message": "Comment deleted successfully"
-    }
+        if not comment:
+            raise HTTPException(
+                status_code=404,
+                detail="Comment not found"
+            )
+
+        return comment
+
+    def get_all_comments(self):
+
+        return self.comment_repository.get_all_comments(
+            self.db
+        )
+
+    def delete_comment(self, comment_id: int):
+
+        comment = self.comment_repository.delete_comment(
+            self.db,
+            comment_id
+        )
+
+        if not comment:
+            raise HTTPException(
+                status_code=404,
+                detail="Comment not found"
+            )
+
+        return {
+            "message": "Comment deleted successfully"
+        }
