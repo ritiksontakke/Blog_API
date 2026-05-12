@@ -1,4 +1,5 @@
 from pydantic import BaseModel , EmailStr , field_validator
+from typing import Optional
 
 # Inheritance
 
@@ -27,3 +28,10 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+
+    name: Optional[str] = None
+    username: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None

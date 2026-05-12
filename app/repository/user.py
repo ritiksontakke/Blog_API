@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.schemas.user import UserCreate
-
+from app.schemas.user import (
+    UserCreate,
+    UserUpdate
+)
 
 class UserRepository:
 
@@ -53,7 +55,7 @@ class UserRepository:
         self,
         db: Session,
         user_id: int,
-        user_data: UserCreate
+        user_data: UserUpdate
     ):
 
         user = db.query(User).filter(
@@ -63,10 +65,17 @@ class UserRepository:
         if not user:
             return None
 
-        user.name = user_data.name
-        user.username = user_data.username
-        user.email = user_data.email
-        user.password_hash = user_data.password
+        if user_data.name:
+            user.name = user_data.name
+
+        if user_data.username:
+            user.username = user_data.username
+
+        if user_data.email:
+            user.email = user_data.email
+
+        if user_data.password:
+            user.password_hash = user_data.password
 
         db.commit()
         db.refresh(user)

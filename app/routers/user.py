@@ -2,10 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
-
 from app.schemas.user import (
     UserCreate,
-    UserLogin,
+    UserUpdate,
     UserResponse
 )
 
@@ -67,7 +66,7 @@ def get_user(
 @UserRouter.put("/{user_id}")
 def update_user(
     user_id: int,
-    user_data: UserCreate,
+    user_data: UserUpdate,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):

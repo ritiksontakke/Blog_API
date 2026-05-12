@@ -1,7 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.schemas.user import UserCreate, UserLogin
+from app.schemas.user import (
+    UserCreate,
+    UserLogin,
+    UserUpdate
+)
 from app.repository.user import UserRepository
 
 from app.auth.hashing import (
@@ -68,7 +72,8 @@ class UserService:
 
         # JWT Token
         access_token = create_access_token({
-            "user_id": existing_user.id
+            "user_id": existing_user.id,
+            "role" : "admin"
         })
 
         return {
@@ -94,13 +99,15 @@ class UserService:
     def update_user(
         self,
         user_id: int,
-        user_data: UserCreate
+        user_data: UserUpdate
     ):
 
         # Hash Password While Updating
-        user_data.password = hash_password(
-            user_data.password
-        )
+        if user_data.password:
+
+            user_data.password = hash_password(
+                user_data.password
+            )
 
         user = self.user_repository.update_user(
             self.db,
