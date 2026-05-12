@@ -4,6 +4,13 @@ from sqlalchemy.orm import Session
 from app.schemas.user import UserCreate, UserLogin
 from app.repository.user import UserRepository
 
+from app.auth.hashing import (
+    hash_password,
+    verify_password
+)
+
+from app.auth.jwt_handler import create_access_token
+
 
 class UserService:
 
@@ -25,16 +32,21 @@ class UserService:
                 detail="Email already exists"
             )
 
+        # Password Hashing
+        user.password = hash_password(
+            user.password
+        )
+
         return self.user_repository.create_user(
             self.db,
             user
         )
 
-    def login_user(self, user: UserLogin):
+    def login_user(self, email: str, password: str):
 
         existing_user = self.user_repository.get_user_by_email(
             self.db,
-            user.email
+            email,
         )
 
         if not existing_user:
@@ -43,14 +55,25 @@ class UserService:
                 detail="User not found"
             )
 
-        if existing_user.password_hash != user.password:
+        # Password Verify
+        if not verify_password(
+            password,
+            existing_user.password_hash
+        ):
+
             raise HTTPException(
                 status_code=400,
                 detail="Invalid password"
             )
 
+        # JWT Token
+        access_token = create_access_token({
+            "user_id": existing_user.id
+        })
+
         return {
-            "message": "Login Successful"
+            "access_token": access_token,
+            "token_type": "bearer"
         }
 
     def get_user(self, user_id: int):
@@ -73,6 +96,11 @@ class UserService:
         user_id: int,
         user_data: UserCreate
     ):
+
+        # Hash Password While Updating
+        user_data.password = hash_password(
+            user_data.password
+        )
 
         user = self.user_repository.update_user(
             self.db,
