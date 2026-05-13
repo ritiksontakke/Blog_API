@@ -1,7 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.schemas.post import PostCreate, PostUpdate
+from app.schemas.post import (
+    PostCreate,
+    PostUpdate
+)
+
 from app.repository.post import PostRepository
 
 
@@ -48,26 +52,12 @@ class PostService:
     def update_post(
         self,
         post_id: int,
-        post_data: PostUpdate
+        post_data: PostUpdate,
+        current_user
     ):
 
-        post = self.post_repository.update_post(
-            self.db,
-            post_id,
-            post_data
-        )
-
-        if not post:
-            raise HTTPException(
-                status_code=404,
-                detail="Post not found"
-            )
-
-        return post
-
-    def delete_post(self, post_id: int):
-
-        post = self.post_repository.delete_post(
+        # Get Post
+        post = self.post_repository.get_post(
             self.db,
             post_id
         )
@@ -77,6 +67,51 @@ class PostService:
                 status_code=404,
                 detail="Post not found"
             )
+
+        # Authorization Check
+        if post.user_id != current_user.id:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized"
+            )
+
+        return self.post_repository.update_post(
+            self.db,
+            post_id,
+            post_data
+        )
+
+    def delete_post(
+        self,
+        post_id: int,
+        current_user
+    ):
+
+        # Get Post
+        post = self.post_repository.get_post(
+            self.db,
+            post_id
+        )
+
+        if not post:
+            raise HTTPException(
+                status_code=404,
+                detail="Post not found"
+            )
+
+        # Authorization Check
+        if post.user_id != current_user.id:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized"
+            )
+
+        self.post_repository.delete_post(
+            self.db,
+            post_id
+        )
 
         return {
             "message": "Post deleted successfully"

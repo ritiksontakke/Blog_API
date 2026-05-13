@@ -73,7 +73,7 @@ class UserService:
         # JWT Token
         access_token = create_access_token({
             "user_id": existing_user.id,
-            "role" : "admin"
+            "role" : "admin",
         })
 
         return {

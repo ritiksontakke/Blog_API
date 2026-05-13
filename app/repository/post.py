@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-
 from app.models.post import Post
 from app.schemas.post import (
     PostCreate,
@@ -45,7 +44,7 @@ class PostRepository:
         db: Session,
         post_id: int,
         post_data: PostUpdate
-    ):
+):
 
         post = db.query(Post).filter(
             Post.id == post_id
@@ -54,8 +53,11 @@ class PostRepository:
         if not post:
             return None
 
-        post.title = post_data.title
-        post.content = post_data.content
+        if post_data.title:
+            post.title = post_data.title
+
+        if post_data.content:
+            post.content = post_data.content
 
         db.commit()
         db.refresh(post)

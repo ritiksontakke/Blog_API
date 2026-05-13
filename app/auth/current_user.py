@@ -19,14 +19,17 @@ def get_current_user(
 ):
 
     try:
-
+        print("A--------------")
         payload = jwt.decode(
             token,
             SECRET_KEY,
             algorithms=[ALGORITHM]
         )
+        print("B--------------")
 
         user_id = payload.get("user_id")
+
+        print("C--------------")
 
         if user_id is None:
             raise HTTPException(

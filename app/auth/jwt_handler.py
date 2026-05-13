@@ -1,9 +1,9 @@
 from jose import jwt
 from datetime import datetime, timedelta
 
-SECRET_KEY = "secret"
+SECRET_KEY = ""
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 50
 
 
 

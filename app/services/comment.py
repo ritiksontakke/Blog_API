@@ -47,9 +47,14 @@ class CommentService:
             self.db
         )
 
-    def delete_comment(self, comment_id: int):
+    def delete_comment(
+        self,
+        comment_id: int,
+        current_user
+    ):
 
-        comment = self.comment_repository.delete_comment(
+        # Get Comment
+        comment = self.comment_repository.get_comment(
             self.db,
             comment_id
         )
@@ -59,6 +64,19 @@ class CommentService:
                 status_code=404,
                 detail="Comment not found"
             )
+
+        # Authorization Check
+        if comment.user_id != current_user.id:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized"
+            )
+
+        self.comment_repository.delete_comment(
+            self.db,
+            comment_id
+        )
 
         return {
             "message": "Comment deleted successfully"
