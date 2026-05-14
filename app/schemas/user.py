@@ -1,6 +1,7 @@
 from pydantic import BaseModel , EmailStr , field_validator
 from typing import Optional
 
+
 # Inheritance
 
 class UserBase(BaseModel):
